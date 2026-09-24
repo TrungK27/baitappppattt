@@ -1,40 +1,32 @@
 import streamlit as st
 import numpy as np
 from math import gcd
+from Crypto.Cipher import DES
 
-# ============================================================
-# CẤU HÌNH TRANG
-# ============================================================
 st.set_page_config(
     page_title="🐢 Mã hóa Cổ điển - Rùa Biển",
     page_icon="🐢",
     layout="wide"
 )
 
-# ============================================================
-# 🐢 CSS CHỦ ĐỀ RÙA BIỂN
-# ============================================================
 st.markdown("""
 <style>
-/* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Fredoka:wght@500;600;700&display=swap');
 
-/* 🌊 Nền gradient: xanh rêu → xanh biển sâu */
 .stApp {
     background:
         radial-gradient(ellipse at top, rgba(168, 230, 207, 0.5) 0%, transparent 55%),
         radial-gradient(ellipse at bottom, rgba(38, 139, 147, 0.4) 0%, transparent 60%),
         linear-gradient(180deg,
-            #d4f1e8 0%,      /* xanh lá non nhạt */
-            #a8e6cf 20%,     /* xanh rêu sáng */
-            #7dd3c0 45%,     /* xanh ngọc bích */
-            #4db6ac 70%,     /* xanh rùa biển */
-            #2e8b8f 90%,     /* xanh biển sâu */
-            #1a5f6f 100%);   /* đáy đại dương */
+            #d4f1e8 0%,
+            #a8e6cf 20%,
+            #7dd3c0 45%,
+            #4db6ac 70%,
+            #2e8b8f 90%,
+            #1a5f6f 100%);
     background-attachment: fixed;
 }
 
-/* Hiệu ứng bong bóng nước ở đáy */
 .stApp::after {
     content: "🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧 🫧";
     position: fixed;
@@ -57,12 +49,10 @@ st.markdown("""
     50%      { transform: translateY(-12px); opacity: 0.55; }
 }
 
-/* Font chữ mềm mại */
 html, body, [class*="css"], .stMarkdown, p, label, div {
     font-family: 'Quicksand', 'Comic Sans MS', sans-serif !important;
 }
 
-/* Tiêu đề chính - màu xanh rêu đậm */
 h1 {
     font-family: 'Fredoka', sans-serif !important;
     color: #2e8b57 !important;
@@ -81,7 +71,6 @@ h2, h3 {
     font-weight: 700 !important;
 }
 
-/* Nút bấm - xanh ngọc bích như mai rùa */
 .stButton > button {
     background: linear-gradient(135deg, #a8e6cf, #6fcf97, #2e8b57) !important;
     color: #ffffff !important;
@@ -105,7 +94,6 @@ h2, h3 {
     background: linear-gradient(135deg, #c5f0e0, #7dd3c0, #3ba06a) !important;
 }
 
-/* Ô nhập text - viền xanh ngọc */
 .stTextArea textarea, .stTextInput input, .stNumberInput input {
     border-radius: 16px !important;
     border: 2.5px solid #7dd3c0 !important;
@@ -121,7 +109,6 @@ h2, h3 {
     box-shadow: 0 0 0 4px rgba(168, 230, 207, 0.45) !important;
 }
 
-/* Sidebar - nền xanh rêu */
 [data-testid="stSidebar"] {
     background:
         linear-gradient(180deg,
@@ -137,28 +124,24 @@ h2, h3 {
     text-shadow: 1px 1px 0 #d4f1e8;
 }
 
-/* Selectbox */
 .stSelectbox > div > div, .stMultiSelect > div > div {
     border-radius: 16px !important;
     border: 2.5px solid #7dd3c0 !important;
     background-color: #f0fbf7 !important;
 }
 
-/* Info box */
 .stAlert {
     border-radius: 16px !important;
     border-left: 6px solid #2e8b57 !important;
     background-color: #e8f8f2 !important;
 }
 
-/* Expander */
 .streamlit-expanderHeader, [data-testid="stExpander"] {
     border-radius: 16px !important;
     background-color: #f0fbf7 !important;
     border: 2px dashed #7dd3c0 !important;
 }
 
-/* 🐢 Rùa bơi lất phất */
 .turtle-bg {
     position: fixed;
     top: -10%;
@@ -187,7 +170,6 @@ h2, h3 {
 .turtle-bg:nth-child(7)  { left: 85%; animation-delay: 10s;   font-size: 24px; }
 .turtle-bg:nth-child(8)  { left: 94%; animation-delay: 5.5s;  font-size: 34px; }
 
-/* Khung kết quả - như mai rùa */
 .result-box {
     background:
         radial-gradient(circle at 20% 30%, rgba(168, 230, 207, 0.6) 0%, transparent 40%),
@@ -232,7 +214,6 @@ h2, h3 {
     line-height: 1.5;
 }
 
-/* Footer */
 .turtle-footer {
     text-align: center;
     color: #1a5f6f;
@@ -242,7 +223,6 @@ h2, h3 {
     text-shadow: 1px 1px 0 rgba(212, 241, 232, 0.9);
 }
 
-/* Divider - đường sóng biển */
 hr {
     border: none;
     height: 6px;
@@ -256,20 +236,17 @@ hr {
     opacity: 0.65;
 }
 
-/* Text caption */
 .stCaption, small {
     color: #1a5f6f !important;
     font-weight: 600 !important;
 }
 
-/* Radio & Checkbox */
 .stRadio label, .stCheckbox label {
     color: #1a5f6f !important;
     font-weight: 600 !important;
 }
 </style>
 
-<!-- 🐢 Đàn rùa bơi lất phất -->
 <div class="turtle-bg">🐢</div>
 <div class="turtle-bg">🐢</div>
 <div class="turtle-bg">🐢</div>
@@ -281,19 +258,12 @@ hr {
 """, unsafe_allow_html=True)
 
 
-# ============================================================
-# BẢNG CHỮ CÁI
-# ============================================================
 Z26 = "abcdefghijklmnopqrstuvwxyz"
 Z29 = "aăâbcdđeêghiklmnoôơpqrstuưvxy"
 
 def get_alphabet(use_z29):
     return Z29 if use_z29 else Z26
 
-
-# ============================================================
-# HÀM HỖ TRỢ
-# ============================================================
 def char_to_num(c, alphabet):
     idx = alphabet.find(c.lower())
     return idx if idx >= 0 else -1
@@ -309,10 +279,6 @@ def mod_inverse(a, m):
             return x
     raise ValueError(f"Không có nghịch đảo modulo của {a} theo {m}")
 
-
-# ============================================================
-# 1. CAESAR
-# ============================================================
 def caesar_encrypt(text, k, alphabet):
     result = ""
     for c in text:
@@ -327,10 +293,6 @@ def caesar_encrypt(text, k, alphabet):
 def caesar_decrypt(text, k, alphabet):
     return caesar_encrypt(text, -k, alphabet)
 
-
-# ============================================================
-# 2. SUBSTITUTION
-# ============================================================
 def substitution_encrypt(text, key, alphabet):
     if len(key) != len(alphabet):
         raise ValueError(f"Khóa phải có đúng {len(alphabet)} ký tự")
@@ -357,10 +319,6 @@ def substitution_decrypt(text, key, alphabet):
             result += c
     return result
 
-
-# ============================================================
-# 3. VIGENERE
-# ============================================================
 def vigenere_encrypt(text, key, alphabet):
     key_low = key.lower()
     shifts = [alphabet.index(c) for c in key_low if c in alphabet]
@@ -397,10 +355,6 @@ def vigenere_decrypt(text, key, alphabet):
             result += c
     return result
 
-
-# ============================================================
-# 4. AFFINE
-# ============================================================
 def affine_encrypt(text, a, b, alphabet):
     n = len(alphabet)
     if gcd(a, n) != 1:
@@ -428,10 +382,6 @@ def affine_decrypt(text, a, b, alphabet):
             result += c
     return result
 
-
-# ============================================================
-# 5. HILL 2x2
-# ============================================================
 def hill_encrypt(text, K, alphabet):
     n = len(alphabet)
     idxs = [char_to_num(c, alphabet) for c in text if char_to_num(c, alphabet) >= 0]
@@ -468,22 +418,50 @@ def hill_decrypt(text, K, alphabet):
         result += num_to_char(p2, alphabet)
     return result
 
+def des_encrypt(text, key):
+    try:
+        key_bytes = bytes.fromhex(key)
+        text_bytes = bytes.fromhex(text)
+    except ValueError:
+        raise ValueError("Dữ liệu và Khóa phải là chuỗi Hexadecimal hợp lệ!")
+    
+    if len(key_bytes) != 8:
+        raise ValueError("Khóa DES phải dài đúng 8 bytes (16 ký tự Hex).")
+    if len(text_bytes) != 8:
+        raise ValueError("Bản rõ DES (1 khối) phải dài đúng 8 bytes (16 ký tự Hex).")
+        
+    cipher = DES.new(key_bytes, DES.MODE_ECB)
+    encrypted = cipher.encrypt(text_bytes)
+    return encrypted.hex().upper()
 
-# ============================================================
-# 🐢 GIAO DIỆN CHÍNH
-# ============================================================
+def des_decrypt(text, key):
+    try:
+        key_bytes = bytes.fromhex(key)
+        text_bytes = bytes.fromhex(text)
+    except ValueError:
+        raise ValueError("Dữ liệu và Khóa phải là chuỗi Hexadecimal hợp lệ!")
+        
+    if len(key_bytes) != 8:
+        raise ValueError("Khóa DES phải dài đúng 8 bytes (16 ký tự Hex).")
+    if len(text_bytes) != 8:
+        raise ValueError("Bản mã DES (1 khối) phải dài đúng 8 bytes (16 ký tự Hex).")
+        
+    cipher = DES.new(key_bytes, DES.MODE_ECB)
+    decrypted = cipher.decrypt(text_bytes)
+    return decrypted.hex().upper()
+
+
 st.title("🐢 Ứng dụng Mã hóa Cổ điển 🐢")
 st.markdown(
     "<p style='text-align:center; color:#1a5f6f; font-size:1.15rem; font-weight:600; "
     "text-shadow:1px 1px 0 rgba(212,241,232,0.9);'>"
-    "🌊 Dịch vòng • Thay thế • Vigenere • Affine • Hill 🌊<br>"
-    "<span style='font-size:0.98rem;'>Trên hệ Z26 (tiếng Anh) và Z29 (tiếng Việt)</span>"
+    "🌊 Dịch vòng • Thay thế • Vigenere • Affine • Hill • DES 🌊<br>"
+    "<span style='font-size:0.98rem;'>Trên hệ Z26 (tiếng Anh), Z29 (tiếng Việt) và Hexadecimal (DES)</span>"
     "</p>",
     unsafe_allow_html=True
 )
 st.markdown("---")
 
-# ----- SIDEBAR -----
 with st.sidebar:
     st.header("🐢 Cấu hình")
 
@@ -494,20 +472,26 @@ with st.sidebar:
             "Thay thế (Substitution)",
             "Vigenere",
             "Affine",
-            "Hill (2x2)"
+            "Hill (2x2)",
+            "DES (Hexadecimal)"
         ]
     )
 
-    system_type = st.radio(
-        "🌊 Hệ mã hóa:",
-        ["Z26 - Tiếng Anh 🇬🇧", "Z29 - Tiếng Việt 🇻🇳"]
-    )
-
-    use_z29 = system_type.startswith("Z29")
-    alphabet = get_alphabet(use_z29)
-    n = len(alphabet)
-
-    st.info(f"📖 Bảng chữ cái ({n} ký tự):\n`{alphabet}`")
+    if cipher_type == "DES (Hexadecimal)":
+        st.info("🔐 DES yêu cầu đầu vào là chuỗi Hexadecimal (16 ký tự cho 1 khối 64-bit).")
+        system_type = "DES (Hexadecimal)"
+        use_z29 = False
+        alphabet = ""
+        n = 0
+    else:
+        system_type = st.radio(
+            "🌊 Hệ mã hóa:",
+            ["Z26 - Tiếng Anh 🇬🇧", "Z29 - Tiếng Việt 🇻🇳"]
+        )
+        use_z29 = system_type.startswith("Z29")
+        alphabet = get_alphabet(use_z29)
+        n = len(alphabet)
+        st.info(f"📖 Bảng chữ cái ({n} ký tự):\n`{alphabet}`")
 
     st.markdown("### 🔑 Khóa")
 
@@ -555,53 +539,78 @@ with st.sidebar:
         else:
             st.success(f"✅ det(K) = {det}. Khóa hợp lệ!")
 
+    elif cipher_type == "DES (Hexadecimal)":
+        key_input = st.text_input(
+            "Khóa DES (16 ký tự Hex):", 
+            value="AABB09182736CCDD",
+            max_chars=16
+        )
+        if len(key_input) != 16:
+            st.error("⚠️ Khóa DES phải có đúng 16 ký tự Hexadecimal (64 bit)!")
+        elif not all(c in "0123456789ABCDEFabcdef" for c in key_input):
+            st.error("⚠️ Khóa chỉ được chứa các ký tự 0-9, A-F!")
+        else:
+            st.success("✅ Khóa hợp lệ!")
 
-# ============================================================
-# HÀM XỬ LÝ TỔNG
-# ============================================================
+
 def process(text, encrypt):
-    if cipher_type == "Dịch vòng (Caesar)":
+    if cipher_type == "DES (Hexadecimal)":
+        return des_encrypt(text, key_input) if encrypt else des_decrypt(text, key_input)
+        
+    elif cipher_type == "Dịch vòng (Caesar)":
         k = int(key_input)
         return caesar_encrypt(text, k, alphabet) if encrypt else caesar_decrypt(text, k, alphabet)
+        
     elif cipher_type == "Thay thế (Substitution)":
         key = key_input.lower().strip()
         return substitution_encrypt(text, key, alphabet) if encrypt else substitution_decrypt(text, key, alphabet)
+        
     elif cipher_type == "Vigenere":
         return vigenere_encrypt(text, key_input, alphabet) if encrypt else vigenere_decrypt(text, key_input, alphabet)
+        
     elif cipher_type == "Affine":
         a, b = key_input
         return affine_encrypt(text, a, b, alphabet) if encrypt else affine_decrypt(text, a, b, alphabet)
+        
     elif cipher_type == "Hill (2x2)":
         return hill_encrypt(text, key_input, alphabet) if encrypt else hill_decrypt(text, key_input, alphabet)
+        
     return ""
 
 
-# ============================================================
-# 2 CỘT NHẬP LIỆU
-# ============================================================
 col_left, col_right = st.columns(2)
+
+if cipher_type == "DES (Hexadecimal)":
+    plain_placeholder = "Ví dụ: 123456ABCD132536"
+    cipher_placeholder = "Ví dụ: 82DC3A3D3838A1F3"
+    plain_label = "Nhập bản rõ Hex (16 ký tự):"
+    cipher_label = "Nhập bản mã Hex (16 ký tự):"
+else:
+    plain_placeholder = "Ví dụ: turtle swims slowly 🐢"
+    cipher_placeholder = "Ví dụ: wxuvsn dlaqj rwlyqn 🌊"
+    plain_label = "Nhập văn bản cần mã hóa:"
+    cipher_label = "Nhập văn bản cần giải mã:"
 
 with col_left:
     st.subheader("📝 Bản rõ")
     plain_text = st.text_area(
-        "Nhập văn bản cần mã hóa:",
+        plain_label,
         height=200,
         key="plain",
-        placeholder="Ví dụ: turtle swims slowly 🐢"
+        placeholder=plain_placeholder
     )
 
 with col_right:
     st.subheader("🔒 Bản mã")
     cipher_text = st.text_area(
-        "Nhập văn bản cần giải mã:",
+        cipher_label,
         height=200,
         key="cipher",
-        placeholder="Ví dụ: wxuvsn dlaqj rwlyqn 🌊"
+        placeholder=cipher_placeholder
     )
 
 st.markdown("---")
 
-# ----- NÚT BẤM -----
 btn_col1, btn_col2, btn_col3 = st.columns(3)
 
 with btn_col1:
@@ -614,9 +623,6 @@ with btn_col3:
     clear_btn = st.button("🗑️ Xóa tất cả 🧹", use_container_width=True)
 
 
-# ============================================================
-# XỬ LÝ SỰ KIỆN
-# ============================================================
 if encrypt_btn:
     if not plain_text.strip():
         st.warning("🐢 Vui lòng nhập bản rõ nhé!")
@@ -665,21 +671,19 @@ if clear_btn:
     st.rerun()
 
 
-# ============================================================
-# HƯỚNG DẪN CUỐI TRANG
-# ============================================================
 st.markdown("---")
 with st.expander("📚 Hướng dẫn sử dụng chi tiết"):
     st.markdown("""
     ### 🐢 Định dạng khóa cho từng loại mã hóa
 
-    | Loại mã hóa | Khóa | Ví dụ (Z26) |
+    | Loại mã hóa | Khóa | Ví dụ |
     |---|---|---|
     | **Dịch vòng** | Số nguyên k | `3` |
     | **Thay thế** | Bảng chữ cái đủ 26/29 ký tự | `qwertyuiopasdfghjklzxcvbnm` |
     | **Vigenere** | Từ khóa chữ | `TURTLE` |
     | **Affine** | Cặp (a, b), gcd(a,n)=1 | `a=5, b=8` |
     | **Hill 2×2** | Ma trận a,b,c,d | `a=3, b=3, c=2, d=5` |
+    | **DES** | Chuỗi 16 ký tự Hex (64-bit) | `AABB09182736CCDD` |
 
     ### 🌊 Ví dụ kiểm thử
 
@@ -688,6 +692,7 @@ with st.expander("📚 Hướng dẫn sử dụng chi tiết"):
     - **Affine Z26:** `affine cipher`, a=5,b=8 → `ihhwvc swfrcp`
     - **Hill 2x2 Z26:** `help`, K=[[3,3],[2,5]] → `HIAT`
     - **Caesar Z29:** `xin chào`, k=3 → dịch chuyển trên bảng 29 ký tự tiếng Việt
+    - **DES (Hex):** Bản rõ: `123456ABCD132536`, Khóa: `AABB09182736CCDD` → Kết quả: `82DC3A3D3838A1F3`
     """)
 
 st.markdown(
